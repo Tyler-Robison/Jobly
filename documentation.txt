@@ -1,0 +1,11 @@
+sqlForPartialUpdate is used to update sql for companies and users fully or partially.
+The function is declared inside of helpers.js and stored as a method (update) on both the User and Company models. 
+update is invoked via a patch req to /users/:username or /companies/:handle
+For both the company and user route, access to update functionality is restriced to logged in users. 
+The update function accepts 2 parameters, the new data and the handle or username of the row being update.
+The handle/username comes from a URL parameter while the data is obtained from the JSON in the req body.
+When the update func is invoked, it invokes sqlForPartialUpdate, passing in the data and the columns to be altered as parameters. 
+inside sqlForPartialUpdate the data is turned into into an array of keys which is then iterated through
+to convert each element into an SQL statement. {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']. 
+That array is then converted to a string with each former element separated by a comma. That, along with an array of the passed in values is returned by the function.  
+

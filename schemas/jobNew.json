@@ -1,0 +1,67 @@
+
+
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "title": "Dog Catcher",
+            "salary": 8000,
+            "equity": 0.05,
+            "company_handle": "Dogs R us"
+        }
+    ],
+    "required": [
+        "title",
+        "company_handle"
+    ],
+    "properties": {
+        "title": {
+            "$id": "#/properties/title",
+            "type": "string",
+            "title": "The title schema",
+            "description": "An explanation about the purpose of this instance.",
+            "minLength": 1,
+            "maxLength": 80,
+            "examples": [
+                "Dog Catcher"
+            ]
+        },
+        "salary": {
+            "$id": "#/properties/salary",
+            "type": "integer",
+            "title": "The salary schema",
+            "description": "An explanation about the purpose of this instance.",
+            "minimum": 1,
+            "examples": [
+                8000
+            ]
+        },
+        "equity": {
+            "$id": "#/properties/equity",
+            "type": "number",
+            "title": "The equity schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0.0,
+            "maximum": 1.0,
+            "examples": [
+                0.05
+            ]
+        },
+        "company_handle": {
+            "$id": "#/properties/company_handle",
+            "type": "string",
+            "title": "The company_handle schema",
+            "description": "An explanation about the purpose of this instance.",
+            "minLength": 1,
+            "maxLength": 25,
+            "examples": [
+                "Dogs R us"
+            ]
+        }
+    }
+}
