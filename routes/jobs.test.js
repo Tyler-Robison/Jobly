@@ -169,10 +169,16 @@ describe("GET /jobs/:id", function () {
         expect(resp.body).toEqual({
             job: {
                 id: 1,
-                companyHandle: 'c1',
                 title: "j1",
                 salary: 1000,
                 equity: '0.0',
+                company: {
+                    description: "Desc1",
+                    handle: "c1",
+                    logoUrl: "http://c1.img",
+                    name: "C1",
+                    numEmployees: 1,
+                },
             },
         });
     });

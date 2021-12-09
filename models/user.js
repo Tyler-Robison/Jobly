@@ -233,9 +233,8 @@ class User {
     SELECT * FROM users
     WHERE username=$1`, [username])
 
-    console.log('error test', userExists)
     if (userExists.rows.length === 0) {
-      throw new BadRequestError(`No such user: ${username}`);
+      throw new NotFoundError(`No such user: ${username}`);
     }
 
     const jobIdExists = await db.query(`
@@ -243,7 +242,7 @@ class User {
     WHERE id=$1`, [jobId])
 
     if (jobIdExists.rows.length === 0) {
-      throw new BadRequestError(`No such job: ${jobId}`);
+      throw new NotFoundError(`No such job: ${jobId}`);
     }
 
     const duplicateCheck = await db.query(
@@ -264,7 +263,6 @@ class User {
     const application = result.rows[0];
 
     return application;
-
   }
 }
 

@@ -462,18 +462,18 @@ describe("POST /users/:username/jobs/:id", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("400 on bad username", async function () {
+  test("404 on bad username", async function () {
     const resp = await request(app)
       .post(`/users/u9999/jobs/1`)
       .set("authorization", `Bearer ${u2Token}`);
-    expect(resp.statusCode).toEqual(400);
+    expect(resp.statusCode).toEqual(404);
   });
 
-  test("400 on bad job_id", async function () {
+  test("404 on bad job_id", async function () {
     const resp = await request(app)
       .post(`/users/u1/jobs/9999`)
       .set("authorization", `Bearer ${u2Token}`);
-    expect(resp.statusCode).toEqual(400);
+    expect(resp.statusCode).toEqual(404);
   });
 
   test("400 on duplicate application", async function () {

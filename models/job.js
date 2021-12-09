@@ -48,15 +48,15 @@ class Job {
      * */
 
 
-    static async findAll(title="", minSalary=0, hasEquity=false) {
+    static async findAll(title = "", minSalary = 0, hasEquity = false) {
 
         // if !hasEquity then don't filter based on equity
         // if hasEquity then want values > 0 to pass filter
         let whereStatement;
         // boolean false changed to 'false' by query string, undo that
-        if(hasEquity === 'false') hasEquity = false
+        if (hasEquity === 'false') hasEquity = false
 
-        if(hasEquity === false) {
+        if (hasEquity === false) {
             whereStatement = `WHERE title ILIKE ('%' || $1 || '%') AND salary >= $2`
         }
         else {
@@ -65,7 +65,7 @@ class Job {
 
         // Don't have to pass in equity, ignore it if false 
         // or hard-code equity > 0 into whereStatement if true
-    
+
         const jobsRes = await db.query(
             `SELECT title,
                 salary,
@@ -99,6 +99,18 @@ class Job {
         const job = jobRes.rows[0];
 
         if (!job) throw new NotFoundError(`No job: ${id}`);
+
+        const companiesRes = await db.query(
+            `SELECT handle,
+                    name,
+                    description,
+                    num_employees AS "numEmployees",
+                    logo_url AS "logoUrl"
+             FROM companies
+             WHERE handle = $1`, [job.companyHandle]);
+
+        delete job.companyHandle;
+        job.company = companiesRes.rows[0];
 
         return job;
     }

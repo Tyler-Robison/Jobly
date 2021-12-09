@@ -1,28 +1,7 @@
-process.env.NODE_ENV = "test";
 const { sqlForPartialUpdate } = require("./sql");
-const db = require("../db.js");
-const User = require("../models/user");
-const Company = require("../models/company");
 const { BadRequestError } = require("../expressError");
 
-
-// { username, password, firstName, lastName, email, isAdmin })
-
 describe("Test sqlForPartialUpdate", function () {
-
-    beforeEach(async function () {
-        await db.query("DELETE FROM companies");
-        await db.query("DELETE FROM users");
-
-        let u1 = await User.register({
-            username: "test1",
-            password: "password",
-            firstName: "Test1",
-            lastName: "Testy1",
-            email: "tyler@yahoo.com",
-            isAdmin: false
-        });
-    });
 
     test("success on valid user data", function () {
 
@@ -68,10 +47,6 @@ describe("Test sqlForPartialUpdate", function () {
         expect(output).toEqual(expectedOutput)
     });
 
-
-
-
-
     test("failure on blank data", function () {
         try {
             const jsToSql = {
@@ -79,9 +54,7 @@ describe("Test sqlForPartialUpdate", function () {
                 lastName: "last_name",
                 isAdmin: "is_admin",
             }
-            const data = {
-
-            }
+            const data = { }
 
             sqlForPartialUpdate(data, jsToSql)
 
@@ -93,40 +66,4 @@ describe("Test sqlForPartialUpdate", function () {
         }
     });
 
-    // test("not found if no such company", async function () {
-    //     try {
-    //         await Company.update("nope", updateData);
-    //         fail();
-    //     } catch (err) {
-    //         expect(err instanceof NotFoundError).toBeTruthy();
-    //     }
-    // });
-
-
 });
-
-afterAll(async function () {
-    await db.query("DELETE FROM companies");
-    await db.query("DELETE FROM users");
-    await db.end();
-});
-
-
-
-
-// function sqlForPartialUpdate(dataToUpdate, jsToSql) {
-//     const keys = Object.keys(dataToUpdate);
-//     if (keys.length === 0) throw new BadRequestError("No data");
-
-//     // {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
-//     const cols = keys.map((colName, idx) =>
-//         `"${jsToSql[colName] || colName}"=$${idx + 1}`,
-//     );
-
-//     console.log('cols', cols.join(", "));
-//     console.log('vals', Object.values(dataToUpdate));
-//     return {
-//       setCols: cols.join(", "),
-//       values: Object.values(dataToUpdate),
-//     };
-//   }

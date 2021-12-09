@@ -275,7 +275,7 @@ describe("apply", function () {
 
       fail()
     } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
+      expect(err instanceof NotFoundError).toBeTruthy();
     }
   });
 
@@ -287,7 +287,7 @@ describe("apply", function () {
 
       fail()
     } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
+      expect(err instanceof NotFoundError).toBeTruthy();
     }
   });
 });
