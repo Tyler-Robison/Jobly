@@ -51,15 +51,17 @@ function ensureLoggedIn(req, res, next) {
   }
 }
 
-// ensures that user is admin
+/** Middleware to use when user must be an admin.
+ *
+ *  Raises Unauthorized if not admin.
+ */
 function ensureAdmin(req, res, next) {
   try {
+    const user = res.locals.user;
     // deny access if not logged in
-    // console.log('testtesttes')
-    // console.log('res test', res.locals.user)
-    if (!res.locals.user) throw new UnauthorizedError();
+    if (!user) throw new UnauthorizedError();
     // deny access if not admin or not the correct user
-    if (!res.locals.user.isAdmin) throw new UnauthorizedError();
+    if (!user.isAdmin) throw new UnauthorizedError();
 
     return next();
   } catch (err) {
@@ -67,18 +69,19 @@ function ensureAdmin(req, res, next) {
   }
 }
 
-// ensures that user is admin OR user editing their own account
+/** Middleware to use when user must be an admin or be editing their own profle.
+ * 
+ * If not admin, username from token must match route param username
+ *
+ *  Raises Unauthorized if not admin or correct user.
+ */
 function ensureCorrectUser(req, res, next) {
   try {
-    // console.log('1', res.locals.user)
-    // console.log('2', res.locals.user.isAdmin)
-    // console.log('3', res.locals.user.username)
-    // console.log('4', req.params.username)
-
+    const user = res.locals.user;
     // deny access if not logged in
-    if (!res.locals.user) throw new UnauthorizedError();
+    if (!user) throw new UnauthorizedError();
     // deny access if not admin and not the correct user
-    if (!res.locals.user.isAdmin && res.locals.user.username !== req.params.username) throw new UnauthorizedError();
+    if (!user.isAdmin && user.username !== req.params.username) throw new UnauthorizedError();
     return next();
   } catch (err) {
     return next(err)
