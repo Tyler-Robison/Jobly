@@ -139,10 +139,11 @@ router.post("/:username/jobs/:id", ensureCorrectUser, async (req, res, next) => 
   try {
     const { username, id } = req.params;
     // console.log('param test', username, id)
+    const meetRequirements = await User.checkRequirements(username, id)
     const application = await User.apply(username, id)
     // console.log('application', application)
 
-    return res.json({ application })
+    return res.json({ application, meetRequirements })
   } catch (err) {
     return next(err)
   }

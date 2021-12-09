@@ -433,7 +433,23 @@ describe("POST /users/:username/jobs/:id", function () {
         currentstate: "interested",
         username: "u1",
         jobId: 1
-      }
+      },
+      meetRequirements: "Requirements met",
+    });
+  });
+
+  test("Told that user is missing requirements", async function () {
+    const resp = await request(app)
+      .post(`/users/u3/jobs/1`)
+      .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(200);
+    expect(resp.body).toEqual({
+      application: {
+        currentstate: "interested",
+        username: "u3",
+        jobId: 1
+      },
+      meetRequirements: "Missing 2 techs",
     });
   });
 
@@ -447,7 +463,8 @@ describe("POST /users/:username/jobs/:id", function () {
         currentstate: "interested",
         username: "u1",
         jobId: 1
-      }
+      },
+      meetRequirements: "Requirements met",
     });
 
     const resp2 = await request(app)
@@ -459,7 +476,8 @@ describe("POST /users/:username/jobs/:id", function () {
       currentstate: "applied",
       username: "u1",
       jobId: 1
-    }
+    },
+    meetRequirements: "Requirements met",
   });
 
   });
@@ -481,7 +499,8 @@ describe("POST /users/:username/jobs/:id", function () {
         currentstate: "interested",
         username: "u1",
         jobId: 1
-      }
+      },
+      meetRequirements: "Requirements met",
     });
   });
 

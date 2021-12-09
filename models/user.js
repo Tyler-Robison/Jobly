@@ -224,28 +224,11 @@ class User {
 
   /** Creates row in applications (user/jobs join table) with
    * composite primary key consisting of username/job_id
-   * 
-   * Before inserting into join table, checks that username and job_id are both valid
+
    * 
    * If application already exists, changes status from 'interested' to 'applied'
    * */
   static async apply(username, jobId) {
-
-    const userExists = await db.query(`
-    SELECT * FROM users
-    WHERE username=$1`, [username])
-
-    if (userExists.rows.length === 0) {
-      throw new NotFoundError(`No such user: ${username}`);
-    }
-
-    const jobIdExists = await db.query(`
-    SELECT * FROM jobs
-    WHERE id=$1`, [jobId])
-
-    if (jobIdExists.rows.length === 0) {
-      throw new NotFoundError(`No such job: ${jobId}`);
-    }
 
     // checks current state of the application
     const currentStateRes = await db.query(
@@ -254,7 +237,7 @@ class User {
            WHERE username = $1 AND job_id=$2`,
       [username, jobId]);
 
-    
+
     let currentState
     // if user has already applied to thsi job, currentState will
     // be given value of 'interested' or 'applied' based on 
@@ -271,7 +254,7 @@ class User {
         WHERE username=$1 AND job_id=$2
         RETURNING username, job_id AS "jobId", current_state AS currentState`, [username, jobId]
       )
-      return res.rows[0] 
+      return res.rows[0]
     } else if (currentState === 'applied') {
       console.log('already applied')
       return { application_status: 'already applied' }
@@ -292,6 +275,58 @@ class User {
     const application = result.rows[0];
 
     return application;
+  }
+
+
+  /** Creates that user meets tech requirements for job
+  * 
+  * Checks that username and job_id are both valid
+  * 
+  * Will return 'meets' or tell you how many techs you are missing
+  * */
+
+  static async checkRequirements(username, jobId) {
+
+    const userExists = await db.query(`
+    SELECT * FROM users
+    WHERE username=$1`, [username])
+
+    if (userExists.rows.length === 0) {
+      throw new NotFoundError(`No such user: ${username}`);
+    }
+
+    const jobIdExists = await db.query(`
+    SELECT * FROM jobs
+    WHERE id=$1`, [jobId])
+
+    if (jobIdExists.rows.length === 0) {
+      throw new NotFoundError(`No such job: ${jobId}`);
+    }
+
+    const userTechsRes = await db.query(
+      `SELECT tech_name FROM technologies_users
+      WHERE username = $1`, [username]
+    )
+    const userTechs = userTechsRes.rows
+    const userTechArr = userTechs.map(ele => ele.tech_name)
+
+    const jobTechsRes = await db.query(
+      `SELECT tech_name FROM technologies_jobs
+      WHERE job_id = $1`, [jobId]
+    )
+    const jobTechs = jobTechsRes.rows
+    const jobTechArr = jobTechs.map(ele => ele.tech_name)
+
+    // Iterate through list of jobtechs, count++ for each user doesn't have
+    console.log('user techs', userTechArr)
+    console.log('job techs', jobTechArr)
+
+    let count = 0;
+    for (let i = 0; i < jobTechArr.length; i++) {
+      if (!userTechArr.includes(jobTechArr[i])) count++;
+    }
+    if (count > 0) return `Missing ${count} techs`
+    return 'Requirements met'
   }
 
 

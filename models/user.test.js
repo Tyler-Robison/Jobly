@@ -258,6 +258,7 @@ describe("remove", function () {
 
 /************************************** apply */
 
+// can't have bad username/job_id b/c check req runs first to catch those
 describe("apply", function () {
   test("works", async function () {
     await User.apply("u1", 1);
@@ -267,11 +268,29 @@ describe("apply", function () {
     expect(res.rows.length).toEqual(1);
   });
 
+
+});
+
+/******************************* check requirements */
+
+describe("check requirements", function () {
+  test("requirements met if user has correct techs", async function () {
+
+    const res = await User.checkRequirements("u1", 1);
+    expect(res).toEqual("Requirements met")
+
+  });
+
+  test("requirements not met if user missing techs", async function () {
+
+    const res = await User.checkRequirements("u2", 1);
+    expect(res).toEqual("Missing 1 techs")
+
+  });
+
   test("fails with bad username", async function () {
     try {
-      await User.apply("u9999", 1);
-      const res = await db.query(
-        "SELECT * FROM applications WHERE username='u1'");
+      await User.checkRequirements("u9999", 1);
 
       fail()
     } catch (err) {
@@ -281,9 +300,7 @@ describe("apply", function () {
 
   test("fails with bad job_id", async function () {
     try {
-      await User.apply("u1", 9999);
-      const res = await db.query(
-        "SELECT * FROM applications WHERE username='u1'");
+      await User.checkRequirements("u1", 9999);
 
       fail()
     } catch (err) {
