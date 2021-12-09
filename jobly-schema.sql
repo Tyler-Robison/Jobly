@@ -38,3 +38,24 @@ CREATE TABLE applications (
   PRIMARY KEY (username, job_id),
   current_state state NOT NULL
 );
+
+CREATE TABLE technologies (
+  tech_name TEXT PRIMARY KEY,
+  description TEXT NOT NULL
+);
+
+CREATE TABLE technologies_jobs (
+  tech_name TEXT
+    REFERENCES technologies ON DELETE CASCADE,
+  job_id INTEGER
+    REFERENCES jobs ON DELETE CASCADE,
+    PRIMARY KEY (tech_name, job_id)
+);
+
+CREATE TABLE technologies_users (
+  tech_name TEXT
+    REFERENCES technologies ON DELETE CASCADE,
+  username TEXT
+    REFERENCES users ON DELETE CASCADE,
+  PRIMARY KEY (tech_name, username)
+);

@@ -370,3 +370,46 @@ VALUES ('Conservator, furniture', 110000, 0, 'watson-davis'),
        ('Learning disability nurse', 66000, NULL, 'ayala-buchanan'),
        ('Research scientist (medical)', 175000, NULL, 'norman-harvey'),
        ('Accommodation manager', 126000, NULL, 'mejia-scott-ryan');
+
+
+INSERT INTO technologies (tech_name, description)
+VALUES  ('Python', 'The coding lang Python'),
+        ('JavaScript', 'The coding Lang JS'),
+        ('Flask', 'Python server framework'),
+        ('Express', 'JS server framework'),
+        ('React', 'Front end framework'),
+        ('HTML', 'scripting lang for declaring/describing elements'),
+        ('CSS', 'scripting lang for styling elements'),
+        ('Testing', 'Writing Unit/Integration tests');
+
+INSERT INTO technologies_jobs (tech_name, job_id)
+VALUES  ('Python', 1),
+        ('Python', 2),
+        ('Python', 4),
+        ('Python', 6),
+        ('Python', 9),
+        ('Python', 12),
+        ('Python', 14),
+        ('JavaScript', 1),
+        ('JavaScript', 3),
+        ('JavaScript', 4),
+        ('JavaScript', 6),
+        ('Flask', 2),
+        ('Flask', 4),
+        ('Flask', 9),
+        ('Flask', 12),
+        ('Express', 1),
+        ('Express', 3),
+        ('Express', 6);
+
+INSERT INTO technologies_users (tech_name, username)
+VALUES  ('Python', 'testuser'),
+        ('JavaScript', 'testuser'),
+        ('Express', 'testuser'),
+        ('Flask', 'testuser'),
+        ('Python', 'testadmin'),
+        ('JavaScript', 'testadmin'),
+        ('Flask', 'testadmin'),
+        ('Express', 'testadmin'),      
+        ('HTML', 'testadmin'),      
+        ('CSS', 'testadmin');    
