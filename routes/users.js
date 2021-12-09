@@ -9,8 +9,9 @@ const { ensureAdmin, ensureCorrectUser } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const User = require("../models/user");
 const { createToken } = require("../helpers/tokens");
-const userNewSchema = require("../schemas/userNew.json");
+const adminNewUserSchema = require("../schemas/adminNewUser.json");
 const userUpdateSchema = require("../schemas/userUpdate.json");
+const generator = require('generate-password');
 
 const router = express.Router();
 
@@ -29,11 +30,22 @@ const router = express.Router();
 
 router.post("/", ensureAdmin, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, userNewSchema);
+    // adminNewUserSchema doesn't allow for password submission
+    const validator = jsonschema.validate(req.body, adminNewUserSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
+
+    // admins don't manually enter pwds, they are randomly generated. 
+    const randomPassword = generator.generate({
+      length: 10,
+      numbers: true
+    });
+    // app has no messaging ability, but would want to send user
+    // their pre-hashing pwd so they know it and can change it
+    console.log('random pwd', randomPassword)
+    req.body.password = randomPassword
 
     const user = await User.register(req.body);
     const token = createToken(user);

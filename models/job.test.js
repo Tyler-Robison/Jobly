@@ -189,7 +189,7 @@ describe("get", function () {
       }
     });
   });
-  
+
     test("not found if no such job", async function () {
       try {
         await Job.get(4);
@@ -261,7 +261,7 @@ describe("update", function () {
   });
 
 
-  test("not found if no such company", async function () {
+  test("not found if no such job", async function () {
     try {
       await Job.update(897987, updateData);
       fail();

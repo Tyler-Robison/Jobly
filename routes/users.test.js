@@ -22,6 +22,8 @@ afterAll(commonAfterAll);
 
 /************************************** POST /users */
 
+// These are routes that allow admins to create user accounts.
+// Password are randomly generated, not created by admin
 describe("POST /users", function () {
   test("201 for admin - create non-admin", async function () {
     const resp = await request(app)
@@ -30,7 +32,6 @@ describe("POST /users", function () {
         username: "u-new",
         firstName: "First-new",
         lastName: "Last-newL",
-        password: "password-new",
         email: "new@email.com",
         isAdmin: false,
       })
@@ -54,7 +55,6 @@ describe("POST /users", function () {
         username: "u-new",
         firstName: "First-new",
         lastName: "Last-newL",
-        password: "password-new",
         email: "new@email.com",
         isAdmin: true,
       })
