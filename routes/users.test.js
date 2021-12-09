@@ -430,10 +430,38 @@ describe("POST /users/:username/jobs/:id", function () {
     expect(resp.statusCode).toEqual(200);
     expect(resp.body).toEqual({
       application: {
+        currentstate: "interested",
         username: "u1",
         jobId: 1
       }
     });
+  });
+
+  test("second application will change state from interested to applied", async function () {
+    const resp = await request(app)
+      .post(`/users/u1/jobs/1`)
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(200);
+    expect(resp.body).toEqual({
+      application: {
+        currentstate: "interested",
+        username: "u1",
+        jobId: 1
+      }
+    });
+
+    const resp2 = await request(app)
+    .post(`/users/u1/jobs/1`)
+    .set("authorization", `Bearer ${u1Token}`);
+  expect(resp2.statusCode).toEqual(200);
+  expect(resp2.body).toEqual({
+    application: {
+      currentstate: "applied",
+      username: "u1",
+      jobId: 1
+    }
+  });
+
   });
 
   test("Logged in non-admin users can't apply to jobs for other users'", async function () {
@@ -450,6 +478,7 @@ describe("POST /users/:username/jobs/:id", function () {
     expect(resp.statusCode).toEqual(200);
     expect(resp.body).toEqual({
       application: {
+        currentstate: "interested",
         username: "u1",
         jobId: 1
       }
@@ -474,17 +503,6 @@ describe("POST /users/:username/jobs/:id", function () {
       .post(`/users/u1/jobs/9999`)
       .set("authorization", `Bearer ${u2Token}`);
     expect(resp.statusCode).toEqual(404);
-  });
-
-  test("400 on duplicate application", async function () {
-    await request(app)
-      .post(`/users/u1/jobs/1`)
-      .set("authorization", `Bearer ${u2Token}`);
-
-      const resp = await request(app)
-      .post(`/users/u1/jobs/1`)
-      .set("authorization", `Bearer ${u2Token}`);
-    expect(resp.statusCode).toEqual(400);
   });
 
 });

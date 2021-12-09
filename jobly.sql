@@ -17,10 +17,10 @@ CREATE DATABASE jobly_test;
 
 \i jobly-schema.sql
 
-SELECT handle, name,description, num_employees AS "numEmployees", logo_url AS "logoUrl"
-FROM companies
-"" 
-ORDER BY name;
+-- SELECT handle, name,description, num_employees AS "numEmployees", logo_url AS "logoUrl"
+-- FROM companies
+-- "" 
+-- ORDER BY name;
 
 -- created_admin
 -- flyboy

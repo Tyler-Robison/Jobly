@@ -112,14 +112,14 @@ class User {
            ORDER BY username`,
     );
     const users = result.rows
-    
+
     for (let i = 0; i < users.length; i++) {
       const username = users[i].username
       const jobsAppliedToRes = await db.query(
         `SELECT job_id FROM applications
           WHERE username=$1`, [username]
       )
-    
+
       const jobsAppliedTo = jobsAppliedToRes.rows
       const jobApps = [];
 
@@ -226,6 +226,8 @@ class User {
    * composite primary key consisting of username/job_id
    * 
    * Before inserting into join table, checks that username and job_id are both valid
+   * 
+   * If application already exists, changes status from 'interested' to 'applied'
    * */
   static async apply(username, jobId) {
 
@@ -245,25 +247,54 @@ class User {
       throw new NotFoundError(`No such job: ${jobId}`);
     }
 
-    const duplicateCheck = await db.query(
-      `SELECT *
+    // checks current state of the application
+    const currentStateRes = await db.query(
+      `SELECT current_state
            FROM applications
            WHERE username = $1 AND job_id=$2`,
       [username, jobId]);
 
-    if (duplicateCheck.rows[0]) {
-      throw new BadRequestError(`Duplicate application: username ${username}, job_id: ${jobId}`);
+    
+    let currentState
+    // if user has already applied to thsi job, currentState will
+    // be given value of 'interested' or 'applied' based on 
+    // current_state of that application
+    if (currentStateRes.rows.length > 0) {
+      currentState = currentStateRes.rows[0].current_state
     }
 
+    // SET current_state=current_state++ -> why doesn't this work?
+    if (currentState === 'interested') {
+      const res = await db.query(
+        `UPDATE applications
+        SET current_state= 'applied'
+        WHERE username=$1 AND job_id=$2
+        RETURNING username, job_id AS "jobId", current_state AS currentState`, [username, jobId]
+      )
+      return res.rows[0] 
+    } else if (currentState === 'applied') {
+      console.log('already applied')
+      return { application_status: 'already applied' }
+      // these 2 states aren't implemented yet, will be in React Jobly I think
+    } else if (currentState === 'accepted') {
+      console.log('you were accepted')
+    } else if (currentState === 'rejected') {
+      console.log('you were rejected')
+    }
+
+    const applicationState = 'interested'
+
     const result = await db.query(`
-    INSERT INTO applications (username, job_id)
-    VALUES ($1, $2)
-    RETURNING username, job_id AS "jobId"`, [username, jobId])
+    INSERT INTO applications (username, job_id, current_state)
+    VALUES ($1, $2, $3)
+    RETURNING username, job_id AS "jobId", current_state AS currentState`, [username, jobId, applicationState])
 
     const application = result.rows[0];
 
     return application;
   }
+
+
 }
 
 
