@@ -53,15 +53,19 @@ class Job {
         // if !hasEquity then don't filter based on equity
         // if hasEquity then want values > 0 to pass filter
         let whereStatement;
-        // default false value OR string 'false' from req.query
-        if(hasEquity === 'false' || hasEquity === false) {
+        // boolean false changed to 'false' by query string, undo that
+        if(hasEquity === 'false') hasEquity = false
+
+        if(hasEquity === false) {
             whereStatement = `WHERE title ILIKE ('%' || $1 || '%') AND salary >= $2`
         }
         else {
             whereStatement = `WHERE title ILIKE ('%' || $1 || '%') AND salary >= $2 AND equity > 0`
         }
-        console.log('where', whereStatement)
 
+        // Don't have to pass in equity, ignore it if false 
+        // or hard-code equity > 0 into whereStatement if true
+    
         const jobsRes = await db.query(
             `SELECT title,
                 salary,
